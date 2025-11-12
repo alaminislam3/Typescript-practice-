@@ -1,8 +1,9 @@
-interface Developer<T,M> {
+interface Developer<T,M,X =null> {
     name : string,
     age : number
     MobileDevice : M
-    smartWatch : T
+    smartWatch : T;
+    bike?: X 
 }
 interface SmartWatch {
     bluetooth : boolean,
@@ -20,7 +21,7 @@ interface MobileDevice {
     cameraFeature : boolean
 }
 
-const poorDeveloper : Developer<SmartWatch,MobileDevice> = {
+const poorDeveloper : Developer<SmartWatch,MobileDevice>  = {
     name : 'Mr.poor',
     age: 23,
     MobileDevice : {
@@ -31,7 +32,8 @@ const poorDeveloper : Developer<SmartWatch,MobileDevice> = {
     smartWatch : {
         bluetooth: true,
         timer: true
-    }
+    },
+    
 }
 
 interface PoorDevice {
