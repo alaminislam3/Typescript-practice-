@@ -1,0 +1,2 @@
+How to run on strip mode : 
+npx ts-node fileName.ts
