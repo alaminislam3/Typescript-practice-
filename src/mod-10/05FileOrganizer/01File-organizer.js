@@ -1,0 +1,148 @@
+const fs = require("fs");
+const path = require("path");
+
+const sourceDir = path.join(__dirname, "output", "messy-files");
+const organizedDir = path.join(__dirname, "output", "organized");
+
+const categories = {
+  images: [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp"],
+  documents: [".pdf", ".doc", ".docx", ".txt", ".rtf", ".odt", ".ppt", ".pptx"],
+  videos: [".mp4", ".mkv", ".mov", ".avi", ".wmv", ".flv", ".webm"],
+  audio: [".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a"],
+  code: [
+    ".js",
+    ".ts",
+    ".jsx",
+    ".tsx",
+    ".html",
+    ".css",
+    ".json",
+    ".py",
+    ".java",
+    ".c",
+    ".cpp",
+    ".cs",
+    ".php",
+    ".rb",
+  ],
+  archives: [".zip", ".rar", ".7z", ".tar", ".gz"],
+  spreadsheets: [".xls", ".xlsx", ".csv", ".ods"],
+  other: [".exe", ".apk", ".iso", ".bin", ".dmg"],
+};
+
+const testFiles = [
+  "vacation.jpg",
+  "resume.pdf",
+  "profile.png",
+  "song.mp3",
+  "movie.mp4",
+  "report.docx",
+  "data.xlsx",
+  "script.js",
+  "archive.zip",
+  "presentation.pptx",
+  "logo.svg",
+  "backup.rar",
+  "notes.txt",
+  "design.psd",
+];
+
+function initializeDirectories() {
+  /* Explanation : https://chatgpt.com/c/6923db13-d908-8320-a699-e901ffa391a0 */
+  if (!fs.existsSync(sourceDir)) {
+    fs.mkdirSync(sourceDir, { recursive: true });
+
+    testFiles.forEach((file) => {
+      fs.writeFileSync(path.join(sourceDir, file), `content of ${file}`);
+    });
+  }
+  console.log("Messy directories files are created !!!");
+
+  if (!fs.existsSync(organizedDir)) {
+    fs.mkdirSync(organizedDir, { recursive: true });
+  }
+
+  Object.keys(categories).forEach((category) => {
+    const categoryPath = path.join(organizedDir, category);
+    if (!fs.existsSync(categoryPath)) {
+      fs.mkdirSync(categoryPath);
+    }
+  });
+}
+
+function getCategories(filename) {
+  const ext = path.extname(filename).toLowerCase();
+
+  for (const [category, extensions] of Object.entries(categories)) {
+    if (extensions.includes(ext)) {
+      return category;
+    }
+  }
+  return "other";
+}
+
+function organizeFiles() {
+  console.log("file organizer \n ");
+  console.log("source", sourceDir);
+  console.log("Destination", organizedDir);
+  console.log("\n" + "-".repeat(50) + "\n");
+
+  const files = fs.readdirSync(sourceDir);
+  if (files.length === 0) {
+    console.log("No file to work on !!!");
+    return;
+  }
+  console.log(`found ${files.length} file to organized \n`);
+
+  const stats = {
+    total: 0,
+    byCategory: {},
+  };
+  files.forEach((file) => {
+    const sourcePath = path.join(sourceDir, file);
+    const stat = fs.statSync(sourcePath);
+    if (stat.isDirectory()) {
+      return;
+    }
+    const category = getCategories(file);
+    const destDir = path.join(organizedDir, category);
+    const destPath = path.join(destDir, file);
+
+    fs.copyFileSync(sourcePath, destPath);
+    stats.total++;
+    stats.byCategory[category] = (stats.byCategory[category] || 0) + 1;
+
+    console.log(`${file}`);
+    console.log(`${category}`);
+    console.log(`${stat.size}`);
+  });
+}
+
+function showHelp() {
+  console.log(`
+    file organizer - usage :
+    
+    commands: 
+    init - create files 
+    organize - organize files into categories
+    
+     example : 
+     node file-organizer init
+     node file-organizer organize
+
+
+    `);
+}
+
+const command = process.argv[2];
+switch (command) {
+  case "init":
+    initializeDirectories();
+    break;
+  case "organize":
+    organizeFiles();
+    break;
+  default:
+    showHelp();
+    break;
+}
