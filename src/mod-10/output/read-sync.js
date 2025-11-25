@@ -1,0 +1,12 @@
+const fs = require("fs");
+
+console.log("start reading...");
+
+try {
+    const data = fs.readFileSync("../Data/dairy.txt", "utf-8");
+    console.log("file content");
+    console.log(data);
+} catch (err) {
+  console.error(err.message);
+}
+
