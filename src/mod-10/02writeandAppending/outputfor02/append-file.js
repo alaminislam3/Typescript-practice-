@@ -8,7 +8,7 @@ const logEntrynew = `\n ${new Date().toISOString()} user logged in again \n`;
 fs.appendFileSync("../outputfor02/new.log" , logEntrynew)
 
 
-/* new */
+/* new learn */
 // const logEntry1 = `\n ${new Date().toISOString()} user logged in \n`;
 // fs.appendFileSync("../outputfor02/new.log", logEntry1);
 
